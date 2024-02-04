@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# -- env
+[[ ":$PATH:" != *":~/.local/bin:"* ]] && export PATH=~/.local/bin:$PATH
+
+# -- tweaks
+stty -ixon # disable Ctrl+S/Q freeze/unfreeze
+
+# -- bat
+export PAGER='less'
+export MANPAGER='less -R'
+
+# -- nvm
+export NVM_DIR="$HOME/.nvm"
+if [[ -d $NVM_DIR ]]; then
+  source "$NVM_DIR/nvm.sh"
+  source "$NVM_DIR/bash_completion"
+fi
+
+# -- node
+if command-v npm &> /dev/null; then
+  source <(npm completion)
+fi
+
+# -- startup
+bash -c ~/scripts/startup_fortune.sh
