@@ -9,7 +9,7 @@ sudo apt-add-repository --yes --no-update --ppa {{ . }}
 
 echo -e '\n\e[36m-- sources (respository) --\e[0m'
 {{ range $repo := .packages.repositories -}}
-{{ with $key := printf "key=/usr/share/keyrings/%s.gpg" $repo.name }}
+{{ with $key := printf "/usr/share/keyrings/%s.gpg" $repo.name }}
 sudo rm -f {{ $key }}
 curl -SsL {{ $repo.key }} | sudo gpg --dearmor --output {{ $key }}
 sudo echo "deb [arch={{ $.chezmoi.arch }} signed-by={{ $key }}] {{ $repo.repo }} {{ $repo.options }}" > /etc/apt/sources.list.d/{{ $repo.name }}.list
