@@ -1,6 +1,18 @@
 packages:
+  ppas:
+    - ppa:git-core/ppa
+  repositories:
+    - name: httpie
+      key: https://packages.httpie.io/deb/KEY.gpg
+      repo: https://packages.httpie.io/deb
+      options: ./
   deb_get:
     - bat
+    - atuin
   apt:
     - cowsay
     - fortune
+    - git
+    - httpie
+    - tree
+  manual:

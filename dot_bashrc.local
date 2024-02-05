@@ -7,7 +7,7 @@
 stty -ixon # disable Ctrl+S/Q freeze/unfreeze
 
 # -- bat
-export PAGER='less'
+export PAGER='less -R'
 export MANPAGER='less -R'
 
 # -- nvm
@@ -21,6 +21,10 @@ fi
 if command-v npm &> /dev/null; then
   source <(npm completion)
 fi
+
+# -- atuin
+eval "$(atuin init bash)"
+eval "$(atuin gen-completions --shell bash)"
 
 # -- startup
 bash -c ~/scripts/startup_fortune.sh

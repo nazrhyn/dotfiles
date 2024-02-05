@@ -1,6 +1,42 @@
 #!/usr/bin/env bash
 
+echo -e '\n\e[34m╒══ \e[35mchezmoi\e[34m PACKAGES ══╕\e[0m'
+
+echo -e '\n\e[36m-- sources (PPA) --\e[0m'
+{{ range .packages.ppas -}}
+sudo apt-add-repository --yes --no-update --ppa {{ . }}
+{{ end -}}
+
+echo -e '\n\e[36m-- sources (respository) --\e[0m'
+{{ range $repo := .packages.repositories -}}
+{{ with $key := printf "key=/usr/share/keyrings/%s.gpg" $repo.name }}
+sudo rm -f {{ $key }}
+curl -SsL {{ $repo.key }} | sudo gpg --dearmor --output {{ $key }}
+sudo echo "deb [arch={{ $.chezmoi.arch }} signed-by={{ $key }}] {{ $repo.repo }} {{ $repo.options }}" > /etc/apt/sources.list.d/{{ $repo.name }}.list
+{{ end -}}
+{{ end -}}
+
+echo -e '\n\e[36m-- install (apt) --\e[0m'
 sudo apt update
 sudo apt install -y {{ .packages.apt | join " " }}
 
-sudo deb-get install {{ .packages.deb_get | join " " }}
+echo -e '\n\e[36m-- install (deb-get) --\e[0m'
+sudo DEBIAN_FRONTEND=noninteractive deb-get install {{ .packages.deb_get | join " " }}
+
+echo -e '\n\e[36m-- install (manual) --\e[0m'
+
+{{/* Clear any existing chezmoi manual install working directory. */}}
+rm -rf /tmp/cmin
+
+{{ range $manual := .packages.manual -}}
+{{/* Create a new working directory for each manual install. */}}
+mkdir -p /tmp/cmin
+cd /tmp/cmin
+
+echo -e '\n\e[96mInstalling \e[96;1m{{ $manual.name }}\e[96m...\e[0m'
+{{ $manual.script }}
+
+rm -rf /tmp/cmin
+{{ end -}}
+
+echo -e '\n\e[34m╘══ \e[35mchezmoi\e[34m PACKAGES ══╛\e[0m'
